@@ -20,7 +20,9 @@ class Section extends Component {
         photosLatest:[],
         photosPopular:[],
         enlarge: false,
-        chosenPhotoId:""
+        chosenPhotoId:"",
+        chosenPhotolikes:"",
+        chosenPhotoDwnlds:""
          }
 
     }
@@ -63,7 +65,10 @@ class Section extends Component {
         let promise = unsplash.photos.getPhotoStats(id)
             .then(toJson)
             .then((stats)=>{
-                console.log(stats)
+                this.setState=({
+                    chosenPhotoLikes: stats.likes,
+                    chodsenPhotoDwnlds: stats.downloads
+                })
             })
         return promise;
       }
@@ -103,18 +108,34 @@ render(){
                 {  this.state.sort==="latest" ?
                     this.state.photosLatest.map((photo)=>{
                     return(
-                     <div 
-                     className="regularPhoto"><img src={photo.url} photo={photo.id} onMouseEnter={()=>this.getPhotoStats(photo.id)} onClick={()=>this.handleBig(photo.id)}/></div>
+                     <div className="regularPhoto"><img src={photo.url} 
+                                                    photo={photo.id} 
+                                                    onMouseEnter={()=>this.getPhotoStats(photo.id)} 
+                                                    onClick={()=>this.handleBig(photo.id)}/>
+                                                    <div className="infoContainer">
+                                                        <span>Likes: {this.state.chosenPhotolikes}</span>
+                                                        <span>Likes: {this.state.chosenPhotolikes}</span>
+
+                                                    </div>
+                    </div>
                      )
                  })
                  :  this.state.photosPopular.map((photo)=>{
                     return(
-                    <div className="regularPhoto"><img src={photo.url} photo={photo.id} onMouseEnter={()=>this.getPhotoStats(photo.id)} onClick={()=>this.handleBig(photo.id)}/></div>
+                    <div className="regularPhoto"><img src={photo.url} 
+                                                        photo={photo.id} 
+                                                        onMouseEnter={()=>this.getPhotoStats(photo.id)} 
+                                                        onClick={()=>this.handleBig(photo.id)}/>
+                                                         <div className="infoContainer">
+                                                        <span>Likes: {this.state.chosenPhotolikes}</span>
+                                                        <span>Likes: {this.state.chosenPhotolikes}</span>
+                                                        </div></div>
                     )
                 })
              }
-             </div>
             </div>
+            </div>
+           
              }
              </>
             
