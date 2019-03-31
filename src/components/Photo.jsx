@@ -13,7 +13,9 @@ class Photo extends Component{
         this.state={
             photoId:this.props.photoId,
             photoUrl:"",
-            photoStats:[],
+            user:"",
+            userPhoto:"",
+            
         }
     }
     getPhoto = () =>{
@@ -21,8 +23,12 @@ class Photo extends Component{
             .then(toJson)
             .then((response)=>{
                 if(!(response.errors !== undefined && response.errors.length > 0)){
+                    console.log(response)
                     this.setState({
-                        photoUrl: response.urls.regular
+                        photoUrl: response.urls.regular,
+                        user: response.user.name,
+                        userPhoto: response.user.profile_image.small,
+                        location: response.location.city,
                     });
                 }
             })
@@ -30,26 +36,32 @@ class Photo extends Component{
             return promise;
     }
 
-    getStats = () =>{
-    let promise = unsplash.photos.getPhotoStats(this.state.photoId)
-       .then(toJson)
-       .then((response) => {
-            console.log(response)
-        })
-
-        return promise;
-    }
 
     async componentDidMount(){
         await this.getPhoto();
-        await this.getStats();
     }
     render(){
         return(
             <div className="bigPhotoContainer">
-                <div><img src={this.state.photoUrl}/></div>
+                <div className="actionsContainer">
                 <button onClick={this.props.handleSmall}>Go back</button>
-                <span>Share it on </span><FacebookShareButton url={this.state.photoUrl}><FacebookIcon size={32} round={false}></FacebookIcon></FacebookShareButton> 
+                    <div className="fbContainer">
+                        <span>SHARE IT ON </span>
+                        <FacebookShareButton url={this.state.photoUrl}>
+                        <FacebookIcon size={64}></FacebookIcon>
+                        </FacebookShareButton> 
+                        {/* <span>LIKE IT ON </span>
+                        <FacebookLikeButton url={this.state.photoUrl}>
+                        <FacebookIcon size={64}></FacebookIcon>
+                        </FacebookLikeButton>  */}
+                    </div>
+                    <div className="infoContainer">
+                        <p>Created by <strong>{this.state.user}</strong></p>
+                        <img src={this.state.userPhoto}></img>
+                        <p>Shot in: <strong>{this.state.location}</strong></p>
+                    </div>
+                 </div>
+                 <img src={this.state.photoUrl}/> 
             </div>
         )
     }

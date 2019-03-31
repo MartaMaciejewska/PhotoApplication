@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {HashRouter, Route, Link,} from 'react-router-dom';
+import {HashRouter} from 'react-router-dom';
 import Unsplash , {toJson} from 'unsplash-js';
 import Photo from './Photo.jsx';
 
@@ -21,8 +21,9 @@ class Section extends Component {
         photosPopular:[],
         enlarge: false,
         chosenPhotoId:"",
-        chosenPhotolikes:"",
-        chosenPhotoDwnlds:""
+        chosenPhotoLikes:"",
+        chosenPhotoDwnlds:"",
+        chosenPhotoCountry:"",
          }
 
     }
@@ -40,9 +41,8 @@ class Section extends Component {
     }
 
     getCollectionPhotos=(id)=>{
-
         let that = this;
-        let promise = unsplash.collections.getCollectionPhotos(id, 4, 30, "latest")
+        let promise = unsplash.collections.getCollectionPhotos(id, 1, 100, "latest")
              .then(toJson)
              .then((response) => {
                  response.map((photo)=>{
@@ -50,7 +50,7 @@ class Section extends Component {
                     that.setState(prevState=>({photosLatest: [...prevState.photosLatest,{id: photo.id, url: url}]}))
                  })
               })
-              let promise2 = unsplash.collections.getCollectionPhotos(id, 4, 30, "popular")
+              let promise2 = unsplash.collections.getCollectionPhotos(id, 1, 100, "popular")
              .then(toJson)
              .then((response) => {
                 response.map((photo)=>{
@@ -62,14 +62,35 @@ class Section extends Component {
       }
     
      getPhotoStats=(id)=>{
+
         let promise = unsplash.photos.getPhotoStats(id)
             .then(toJson)
             .then((stats)=>{
-                this.setState=({
-                    chosenPhotoLikes: stats.likes,
-                    chodsenPhotoDwnlds: stats.downloads
+                this.setState({
+                    chosenPhotoDwnlds: stats.downloads,
+                    chosenPhotoLikes: stats.likes
                 })
             })
+        return promise;
+      }
+
+      getPhotoCountry=(id)=>{
+        let promise = unsplash.photos.getPhoto(id)
+        .then(toJson)
+        .then((response)=>{
+            console.log(response)
+            if(response.location ===undefined){
+                this.setState({
+                    chosenPhotoCountry: "",
+                })
+            } else {
+            this.setState({
+                chosenPhotoCountry: response.location.country,
+            })
+        }
+        
+        })
+
         return promise;
       }
 
@@ -94,6 +115,7 @@ class Section extends Component {
     
 
 render(){
+
       return <HashRouter>
             <>
             
@@ -108,28 +130,32 @@ render(){
                 {  this.state.sort==="latest" ?
                     this.state.photosLatest.map((photo)=>{
                     return(
-                     <div className="regularPhoto"><img src={photo.url} 
-                                                    photo={photo.id} 
-                                                    onMouseEnter={()=>this.getPhotoStats(photo.id)} 
-                                                    onClick={()=>this.handleBig(photo.id)}/>
-                                                    <div className="infoContainer">
-                                                        <span>Likes: {this.state.chosenPhotolikes}</span>
-                                                        <span>Likes: {this.state.chosenPhotolikes}</span>
-
-                                                    </div>
+                     <div className="regularPhoto" 
+                          style={{backgroundImage:`url(${photo.url}`}}
+                            photo={photo.id} 
+                            onMouseEnter={()=>(this.getPhotoStats(photo.id), this.getPhotoCountry(photo.id))} 
+                            onClick={()=>this.handleBig(photo.id)}>
+                                <div className="infoContainer">
+                                    <p>Likes: {this.state.chosenPhotoLikes}</p>
+                                    <p>Downloads: {this.state.chosenPhotoDwnlds}</p>
+                                     {this.state.chosenPhotoCountry!=="" && <p>Country: {this.state.chosenPhotoCountry}</p> }
+                                </div>
                     </div>
                      )
                  })
                  :  this.state.photosPopular.map((photo)=>{
                     return(
-                    <div className="regularPhoto"><img src={photo.url} 
-                                                        photo={photo.id} 
-                                                        onMouseEnter={()=>this.getPhotoStats(photo.id)} 
-                                                        onClick={()=>this.handleBig(photo.id)}/>
-                                                         <div className="infoContainer">
-                                                        <span>Likes: {this.state.chosenPhotolikes}</span>
-                                                        <span>Likes: {this.state.chosenPhotolikes}</span>
-                                                        </div></div>
+                        <div className="regularPhoto" 
+                        style={{backgroundImage:`url(${photo.url}`}}
+                          photo={photo.id} 
+                          onMouseEnter={()=>(this.getPhotoStats(photo.id), this.getPhotoCountry(photo.id))} 
+                          onClick={()=>this.handleBig(photo.id)}>
+                              <div className="infoContainer">
+                                  <p>Likes: {this.state.chosenPhotoLikes}</p>
+                                  <p>Downloads: {this.state.chosenPhotoDwnlds}</p>
+                                  {this.state.chosenPhotoCountry!=="" && <p>Country: {this.state.chosenPhotoCountry}</p> }
+                              </div>
+                  </div>
                     )
                 })
              }

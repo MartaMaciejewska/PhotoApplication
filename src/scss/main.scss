@@ -1,59 +1,118 @@
 body {
     background-color:lightslategrey;
+    color: white;
+    ul{
+        list-style:none;
+    }
+    button{
+        height:50px;
+        width: 150px;
+        border: 3px solid white;
+        color: white;
+        background-color:transparent;
+        margin-right: 10px;
+        :last-of-type{
+            margin-right:0;
+        }
+    
+    }
 }
-.sectionItem{
-    margin-bottom:20px;
-    width: 30%
-
-        li {
-            list-style:none;
+.sections{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    .sectionItem{
+        margin:20px;
+        width:30%;
+        max-height:600px;
+        .sectionContainer{
+            text-align: center;
+            height: 600px;
+            border: 3px solid white;
+            h1 {
+                color: white;
+            }
+            .thumbs{
+                padding:0;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                li{
+                    width: 100px;
+                    display: inline-block;
+                    .thumb {
+                    display: inline-block;
+                    width:100px;
+                    height:100px;
+                    background-repeat: no-repeat;
+                    background-size:cover;
+                }
+            }
+        }
         }
     }
-
-.thumbs{
-    display: flex;
-    align-items: flex-start;
-    width:300px;
-    margin-bottom: 200px;
-    li{
-        list-style: none;
-    }
 }
 
-.regularPhoto{
-    display: inline;
-}
-
-.photoContainer{
-    display: grid;
-    grid-column-gap: 10px;
-    grid-row-gap: 10px;
-
-}
 
 .bigPhotoContainer{
-    height:100vh;
     width:100vw;
-    background-color: whitesmoke;
-    z-index:2
+    background-color: transparent;
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    .actionsContainer{
+        display:flex;
+        flex-direction: column;
+        align-items: center;
+        span{
+            font-size: 20px;
+        }
+    .fbContainer{
+        margin-top: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+}
 }
 
+
+.photoContainer{
+    display: inline-grid;
+    height: 100vh;
+    grid-gap:5px;
+    justify-items: center;
+
+
+}
+.sectionHeader{
+    margin-bottom: 20px;
+}
 .regularPhoto{
     position: relative;
+    width:300px;
+    height:300px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    display:inline-block;
     .infoContainer{
         position: absolute;
         bottom:0;
         left:0;
-        height: 25%;
+        height: 40%;
         width:100%;
-        background-color:rgba(255,255,255,0.3);
+        background-color:rgba(255,255,255,0.5);
         display: none;
         color: black;
-        z-index:2
+        p{
+            font-size: 19px;
+        }
+        z-index:2;
     }
     &:hover{
         .infoContainer{
             display:block;
         }
+     }
     }
-}

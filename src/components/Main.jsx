@@ -17,7 +17,6 @@ class Main extends Component {
             collectionsArr:[],
             selectedCollection:"",
         }
-        
     }
 
     getCollections() {
@@ -46,13 +45,12 @@ class Main extends Component {
 
     async componentDidMount(){
        await this.getCollections();
-       
-        
+  
     }
 
     render() {
          return (<HashRouter>
-             <ul>
+             <ul className="sections">
                 {
                     this.state.collectionsArr.map((item)=>{
                         return(
@@ -62,14 +60,14 @@ class Main extends Component {
                                     state:{
                                         sectionName: `${item.title}`
                                     }
-                                }}>
-                                <div>
+                                }} style={{textDecoration:`none`}}>
+                                <div className="sectionContainer">
                                     <h1>{item.title}</h1>
                                     <div>
                                         <ul className="thumbs"> {
-                                                item.photos.map((photo)=>{
+                                                item.photos.map((photo, index)=>{
                                                     return (
-                                                    <li key={photo.id}><img src={photo}/></li>
+                                                    <li key={index}><div className="thumb" style={{backgroundImage:`url(${photo}`}}/></li>
                                                     )
                                                 })
                                             }
