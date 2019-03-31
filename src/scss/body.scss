@@ -1,0 +1,12 @@
+*{
+    margin: 0, auto;
+    box-sizing: border-box;
+}
+
+body {
+    background-color:$bgColor;
+    color: $textColor;
+    ul{
+        list-style: none;
+    }
+}

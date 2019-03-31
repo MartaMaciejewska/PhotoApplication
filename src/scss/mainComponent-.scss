@@ -1,0 +1,35 @@
+.sections{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    .sectionItem{
+        margin:20px;
+        width:30%;
+        max-height:600px;
+        .sectionContainer{
+            text-align: center;
+            height: 600px;
+            border: 3px solid $textColor;
+            h1 {
+                color: $textColor;
+            }
+            .thumbs{
+                padding:0;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                li{
+                    width: 100px;
+                    display: inline-block;
+                    .thumb {
+                    display: inline-block;
+                    width:100px;
+                    height:100px;
+                    background-repeat: no-repeat;
+                    background-size:cover;
+                }
+            }
+        }
+        }
+    }
+}

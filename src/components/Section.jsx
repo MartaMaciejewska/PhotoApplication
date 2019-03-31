@@ -75,22 +75,19 @@ class Section extends Component {
       }
 
       getPhotoCountry=(id)=>{
+          this.setState({
+              chosenPhotoCountry:""
+          })
         let promise = unsplash.photos.getPhoto(id)
         .then(toJson)
         .then((response)=>{
             console.log(response)
-            if(response.location ===undefined){
-                this.setState({
-                    chosenPhotoCountry: "",
-                })
-            } else {
+            if(response.location !==undefined){
             this.setState({
                 chosenPhotoCountry: response.location.country,
             })
         }
-        
         })
-
         return promise;
       }
 

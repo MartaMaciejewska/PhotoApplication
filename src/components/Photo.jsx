@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Unsplash , {toJson} from 'unsplash-js';
-import { FacebookShareButton,FacebookIcon,} from 'react-share';
+import { FacebookShareButton,FacebookIcon} from 'react-share';
+import { SocialIcon } from 'react-social-icons';
 
 const unsplash = new Unsplash({
     applicationId: "2c007a8dff36533a70b7ec1d0870a180dc5b0975b6876434ecdd782b3cf700ed",
@@ -15,6 +16,7 @@ class Photo extends Component{
             photoUrl:"",
             user:"",
             userPhoto:"",
+
             
         }
     }
@@ -26,16 +28,23 @@ class Photo extends Component{
                     console.log(response)
                     this.setState({
                         photoUrl: response.urls.regular,
+                        camera: response.exif.model,
                         user: response.user.name,
-                        userPhoto: response.user.profile_image.small,
-                        location: response.location.city,
+                        userPhoto: response.user.profile_image.large,
+                        instaUrl: response.user.portfolio_url,
+
                     });
+                    if(response.story.description!==undefined || response.story.description!==null){
+                        this.setState({
+                        description: response.story.description,
+                        })
+                    }
+                    
                 }
             })
 
-            return promise;
+        return promise;
     }
-
 
     async componentDidMount(){
         await this.getPhoto();
@@ -44,21 +53,24 @@ class Photo extends Component{
         return(
             <div className="bigPhotoContainer">
                 <div className="actionsContainer">
-                <button onClick={this.props.handleSmall}>Go back</button>
+                <button onClick={this.props.handleSmall}>GO BACK</button>
+                
+                    <div className="infoContainer">
+                        <p>{this.state.desciption}</p>
+                        <p>Created by <strong>{this.state.user}</strong></p>
+                        <img src={this.state.userPhoto}></img>
+                       {this.state.camera!==null && <p>Shot with <strong>{this.state.camera}</strong></p>}
+                        <p>Check out more by the same artist</p>
+                        <SocialIcon network="instagram" style={{ height: 50, width: 50 }} url={this.state.instaUrl}></SocialIcon>
+
+                        
+
+                    </div>
                     <div className="fbContainer">
                         <span>SHARE IT ON </span>
                         <FacebookShareButton url={this.state.photoUrl}>
                         <FacebookIcon size={64}></FacebookIcon>
                         </FacebookShareButton> 
-                        {/* <span>LIKE IT ON </span>
-                        <FacebookLikeButton url={this.state.photoUrl}>
-                        <FacebookIcon size={64}></FacebookIcon>
-                        </FacebookLikeButton>  */}
-                    </div>
-                    <div className="infoContainer">
-                        <p>Created by <strong>{this.state.user}</strong></p>
-                        <img src={this.state.userPhoto}></img>
-                        <p>Shot in: <strong>{this.state.location}</strong></p>
                     </div>
                  </div>
                  <img src={this.state.photoUrl}/> 
