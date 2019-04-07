@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {HashRouter} from 'react-router-dom';
 import Unsplash , {toJson} from 'unsplash-js';
 import Photo from './Photo.jsx';
+import InfiniteScroll from 'react-infinite-scroll-component'
 
 
 
@@ -20,6 +21,8 @@ class Section extends Component {
         photosLatest:[],
         photosPopular:[],
         enlarge: false,
+        counter: 1,
+        perPage:30,
         chosenPhotoId:"",
         chosenPhotoLikes:"",
         chosenPhotoDwnlds:"",
@@ -41,8 +44,9 @@ class Section extends Component {
     }
 
     getCollectionPhotos=(id)=>{
+        const { counter, perPage } = this.state
         let that = this;
-        let promise = unsplash.collections.getCollectionPhotos(id, 1, 100, "latest")
+        let promise = unsplash.collections.getCollectionPhotos(id, `${counter}`, `${perPage}` , "latest")
              .then(toJson)
              .then((response) => {
                  response.map((photo)=>{
@@ -50,7 +54,32 @@ class Section extends Component {
                     that.setState(prevState=>({photosLatest: [...prevState.photosLatest,{id: photo.id, url: url}]}))
                  })
               })
-              let promise2 = unsplash.collections.getCollectionPhotos(id, 1, 100, "popular")
+              let promise2 = unsplash.collections.getCollectionPhotos(id,`${counter}`, `${perPage}`, "popular")
+             .then(toJson)
+             .then((response) => {
+                response.map((photo)=>{
+                 let url = photo.urls.small;
+                 that.setState(prevState=>({photosPopular: [...prevState.photosPopular,{id: photo.id, url: url}]}))
+                 })
+              })
+       return (promise, promise2);       
+      }
+
+      getMorePhotos=(id)=>{
+        let that = this;
+        const { counter, perPage } = this.state;
+        this.setState({
+            perPage: this.state.perPage + counter,
+        })
+        let promise = unsplash.collections.getCollectionPhotos(id,`${counter}`, `${perPage}`, "latest")
+             .then(toJson)
+             .then((response) => {
+                 response.map((photo)=>{
+                    let url = photo.urls.small;
+                    that.setState(prevState=>({photosLatest: [...prevState.photosLatest,{id: photo.id, url: url}]}))
+                 })
+              })
+              let promise2 = unsplash.collections.getCollectionPhotos(id,`${counter}`, `${perPage}`, "popular")
              .then(toJson)
              .then((response) => {
                 response.map((photo)=>{
@@ -104,6 +133,8 @@ class Section extends Component {
         })
       }
 
+
+
     async componentDidMount(){
     
     await this.getCollectionPhotos(this.state.sectionId);
@@ -124,8 +155,18 @@ render(){
                     <button className="lateBtn" onClick={this.handleSortLate}>LATEST</button>
                 </div>
              <div className="photosContainer">
+
                 {  this.state.sort==="latest" ?
-                    this.state.photosLatest.map((photo)=>{
+                             <InfiniteScroll dataLength={this.state.photosLatest.length}
+                             next={this.getMorePhotos}
+                             hasMore={true}
+                             loader={<h4>Wait a sec...</h4>}
+                             endMessage={
+                                <p style={{textAlign: 'center'}}>
+                                <strong>You have seen it all</strong>
+                             </p> }>
+        
+                    {this.state.photosLatest.map((photo)=>{
                     return(
                      <div className="regularPhoto" 
                           style={{backgroundImage:`url(${photo.url}`}}
@@ -139,8 +180,19 @@ render(){
                                 </div>
                     </div>
                      )
-                 })
-                 :  this.state.photosPopular.map((photo)=>{
+                 })}
+                 </InfiniteScroll>
+             
+                 :  
+                 <InfiniteScroll dataLength={this.state.photosPopular.length}
+                 next={this.getMorePhotos}
+                 hasMore={true}
+                 loader={<h4>Wait a sec...</h4>}
+                 endMessage={
+                    <p style={{textAlign: 'center'}}>
+                    <strong>You have seen it all</strong>
+                 </p> }>
+                 {this.state.photosPopular.map((photo)=>{
                     return(
                         <div className="regularPhoto" 
                         style={{backgroundImage:`url(${photo.url}`}}
@@ -154,8 +206,11 @@ render(){
                               </div>
                   </div>
                     )
-                })
+                })}
+                </InfiniteScroll>
              }
+             
+             
             </div>
             </div>
            
